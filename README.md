@@ -11,7 +11,6 @@ TinyApp is a full stack web application built with Node and Express that allows 
 - body-parser
 - cookie-session
 
-
 ## Getting Started
 
 - Install all dependencies (using the `npm install` command).
@@ -19,9 +18,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["Screenshot of URLs page with list of pages"](https://raw.githubusercontent.com/catuchi/tinyapp/83c12a47178650638eb56713b7b97a942a2b1b6e/docs/%3Aurls%20with%20pages.png)
-!["Screenshot of list of URLs for a user"](https://raw.githubusercontent.com/catuchi/tinyapp/9b3a3932a0679d8ad6b4df71b479dc73215234da/docs/urls.png)
-!["Screenshot of URL create page"](https://raw.githubusercontent.com/catuchi/tinyapp/83c12a47178650638eb56713b7b97a942a2b1b6e/docs/create%20short%20url.png)
-!["Screenshot of URL edit page"](https://raw.githubusercontent.com/catuchi/tinyapp/83c12a47178650638eb56713b7b97a942a2b1b6e/docs/edit%20short%20url.png)
-!["Screenshot of login page"](https://raw.githubusercontent.com/catuchi/tinyapp/9b3a3932a0679d8ad6b4df71b479dc73215234da/docs/login%20page.png)
-!["Screenshot of register page"](https://raw.githubusercontent.com/catuchi/tinyapp/9b3a3932a0679d8ad6b4df71b479dc73215234da/docs/register%20page.png)
+!["Screenshot of URLs page with list of pages"](https://github.com/catuchi/tinyapp2/blob/main/docs/:urls%20with%20pages.png?raw=true)
+!["Screenshot of list of URLs for a user"](https://github.com/catuchi/tinyapp2/blob/main/docs/urls.png?raw=true)
+!["Screenshot of URL create page"](https://github.com/catuchi/tinyapp2/blob/main/docs/create%20short%20url.png?raw=true)
+!["Screenshot of URL edit page"](https://github.com/catuchi/tinyapp2/blob/main/docs/edit%20short%20url.png?raw=true)
+!["Screenshot of login page"](https://github.com/catuchi/tinyapp2/blob/main/docs/login%20page.png?raw=true)
+!["Screenshot of register page"](https://github.com/catuchi/tinyapp2/blob/main/docs/register%20page.png?raw=true)
