@@ -3,24 +3,35 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT;
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
-var cookieSession = require('cookie-session');
-const bcrypt = require('bcryptjs');
-const { generateRandomString, findUserById, findUserByEmail, passwordCheck, dbCheckForShortURL, urlsForUser, checkShortUrlBelongsToUser, canDelete } = require("./helpers/helperFunctions");
+const cookieParser = require("cookie-parser");
+var cookieSession = require("cookie-session");
+const bcrypt = require("bcryptjs");
+const {
+  generateRandomString,
+  findUserById,
+  findUserByEmail,
+  passwordCheck,
+  dbCheckForShortURL,
+  urlsForUser,
+  checkShortUrlBelongsToUser,
+  canDelete,
+} = require("./helpers/helperFunctions");
 const { urlDatabase } = require("./helpers/database");
-const { users } = require("./helpers/users")
+const { users } = require("./helpers/users");
 
 app.set("view engine", "ejs");
 app.use(cookieParser());
 
-app.use(cookieSession({
-  name: 'session',
-  keys: [process.env.KEY],
+app.use(
+  cookieSession({
+    name: "session",
+    keys: [process.env.KEY],
 
-  maxAge: 24 * 60 * 60 * 1000
-}))
+    maxAge: 24 * 60 * 60 * 1000,
+  })
+);
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -38,32 +49,57 @@ app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
   if (!userId) {
     const templateVars = { user: null, error: "Please Log in" };
-    res.render("urls_index", templateVars);
+    return res.render("urls_index", templateVars);
   }
-  const templateVars = { error: null, user: findUserById(userId, users), urls: urlsForUser(userId, urlDatabase) };
-  res.render("urls_index", templateVars);
+  const templateVars = {
+    error: null,
+    user: findUserById(userId, users),
+    urls: urlsForUser(userId, urlDatabase),
+  };
+  return res.render("urls_index", templateVars);
 });
-
 
 app.get("/urls/new", (req, res) => {
   const userId = req.session.user_id;
   if (!userId) {
     res.redirect("/login");
   }
-  const templateVars = { user: findUserById(userId, users) }
+  const templateVars = { user: findUserById(userId, users) };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
   const userId = req.session.user_id;
-  const templateVars = { error: null, user: findUserById(userId, users), shortURL: req.params.id, longURL: urlDatabase[req.params.id].longURL };
+  const urlOwner = urlDatabase[req.params.id].userID;
+
+  if (!userId) {
+    const templateVars = { user: null, error: "Please Log in" };
+    return res.render("urls_show", templateVars);
+  }
+
+  if (urlOwner !== userId) {
+    const templateVars = {
+      user: users[userId],
+      error: "Can't access this URL. Please create your own URL",
+    };
+    return res.render("urls_show", templateVars);
+  }
+
+  const templateVars = {
+    error: null,
+    user: findUserById(userId, users),
+    shortURL: req.params.id,
+    longURL: urlDatabase[req.params.id].longURL,
+  };
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   if (dbCheckForShortURL(shortURL, urlDatabase) === null) {
-    res.status(403).send("<html><body><b>Short URL</b> does not exist</body></html>");
+    res
+      .status(403)
+      .send("<html><body><b>Short URL</b> does not exist</body></html>");
     res.end();
   }
   const longURL = urlDatabase[shortURL].longURL;
@@ -85,7 +121,7 @@ app.post("/urls/:id/delete", (req, res) => {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
   }
-})
+});
 
 app.post("/urls/:id", (req, res) => {
   const userId = req.session.user_id;
@@ -95,17 +131,21 @@ app.post("/urls/:id", (req, res) => {
     res.render("urls_index", templateVars);
   }
   if (checkShortUrlBelongsToUser(url, userId, urlDatabase) === null) {
-    const templateVars = { error: "<h4>Short URL does not exist</h4>", user: findUserById(userId, users), shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL };
+    const templateVars = {
+      error: "<h4>Short URL does not exist</h4>",
+      user: findUserById(userId, users),
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL].longURL,
+    };
     res.render("urls_show", templateVars);
   }
-  if (canDelete(shortURL, userId, urlDatabase)) {
+  if (canDelete(url, userId, urlDatabase)) {
     const shortURL = req.params.id;
     const longURL = req.body.longURL;
     urlDatabase[shortURL].longURL = longURL;
     res.redirect("/urls");
   }
-})
-
+});
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -120,13 +160,13 @@ app.post("/login", (req, res) => {
   }
   req.session.user_id = loggedInUser.id;
   res.redirect("/urls");
-})
+});
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  res.clearCookie("user_id");
   req.session = null;
   res.redirect("/urls");
-})
+});
 
 app.get("/register", (req, res) => {
   const userId = req.session.user_id;
@@ -135,7 +175,7 @@ app.get("/register", (req, res) => {
   }
   const templateVars = { user: findUserById(userId, users) };
   res.render("register", templateVars);
-})
+});
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
@@ -149,10 +189,14 @@ app.post("/register", (req, res) => {
     res.end();
   }
   const newUserId = generateRandomString();
-  users[newUserId] = { id: newUserId, email: email, password: bcrypt.hashSync(password, 10) };
+  users[newUserId] = {
+    id: newUserId,
+    email: email,
+    password: bcrypt.hashSync(password, 10),
+  };
   req.session.user_id = newUserId;
   res.redirect("/urls");
-})
+});
 
 app.get("/login", (req, res) => {
   const userId = req.session.user_id;
@@ -161,7 +205,7 @@ app.get("/login", (req, res) => {
   }
   const templateVars = { user: findUserById(userId, users) };
   res.render("login", templateVars);
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
