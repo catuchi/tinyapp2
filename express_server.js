@@ -77,7 +77,7 @@ app.get("/urls/:id", (req, res) => {
   const shortURL = req.params.id;
 
   // check db to see if url exist
-  if (dbCheckForShortURL(shortURL, urlDatabase) === null) {
+  if (!dbCheckForShortURL(shortURL, urlDatabase)) {
     res
       .status(403)
       .send("<html><body><b>Short URL</b> does not exist</body></html>");
@@ -114,7 +114,7 @@ app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
 
   // check db to see if shortURL exists
-  if (dbCheckForShortURL(shortURL, urlDatabase) === null) {
+  if (!dbCheckForShortURL(shortURL, urlDatabase)) {
     res
       .status(403)
       .send("<html><body><b>Short URL</b> does not exist</body></html>");
@@ -148,7 +148,7 @@ app.post("/urls/:id", (req, res) => {
     const templateVars = { user: null, error: "<h4>Please Log in</h4>" };
     res.render("urls_index", templateVars);
   }
-  if (checkShortUrlBelongsToUser(url, userId, urlDatabase) === null) {
+  if (!checkShortUrlBelongsToUser(url, userId, urlDatabase)) {
     const templateVars = {
       error: "<h4>Short URL does not exist</h4>",
       user: findUserById(userId, users),
@@ -172,7 +172,7 @@ app.post("/login", (req, res) => {
     res.status(403).send("User not found. Please enter valid Email");
     res.end();
   }
-  if (bcrypt.compareSync(password, loggedInUser.password) === false) {
+  if (!bcrypt.compareSync(password, loggedInUser.password)) {
     res.status(403).send("Error: Please enter valid Email/Password");
     res.end();
   }
