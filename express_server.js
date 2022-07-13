@@ -70,13 +70,25 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   const userId = req.session.user_id;
-  const urlOwner = urlDatabase[req.params.id].userID;
+  const shortURL = req.params.id;
 
+  // check db to see if url exist
+  if (dbCheckForShortURL(shortURL, urlDatabase) === null) {
+    res
+      .status(403)
+      .send("<html><body><b>Short URL</b> does not exist</body></html>");
+    res.end();
+  }
+
+  const urlOwner = urlDatabase[shortURL].userID;
+
+  // check if user exists
   if (!userId) {
     const templateVars = { user: null, error: "Please Log in" };
     return res.render("urls_show", templateVars);
   }
 
+  // check if url belongs to logged in user
   if (urlOwner !== userId) {
     const templateVars = {
       user: users[userId],
