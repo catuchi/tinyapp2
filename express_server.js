@@ -146,7 +146,7 @@ app.post("/urls/:id", (req, res) => {
   const url = req.params.id;
   if (!userId) {
     const templateVars = { user: null, error: "<h4>Please Log in</h4>" };
-    res.render("urls_index", templateVars);
+    return res.render("urls_index", templateVars);
   }
   if (!checkShortUrlBelongsToUser(url, userId, urlDatabase)) {
     const templateVars = {
@@ -155,13 +155,13 @@ app.post("/urls/:id", (req, res) => {
       shortURL: req.params.shortURL,
       longURL: urlDatabase[req.params.shortURL].longURL,
     };
-    res.render("urls_show", templateVars);
+    return res.render("urls_show", templateVars);
   }
   if (canDelete(url, userId, urlDatabase)) {
     const shortURL = req.params.id;
     const longURL = req.body.longURL;
     urlDatabase[shortURL].longURL = longURL;
-    res.redirect("/urls");
+    return res.redirect("/urls");
   }
 });
 
@@ -189,22 +189,22 @@ app.post("/logout", (req, res) => {
 app.get("/register", (req, res) => {
   const userId = req.session.user_id;
   if (userId) {
-    res.redirect("/urls");
+    return res.redirect("/urls");
   }
   const templateVars = { user: findUserById(userId, users) };
-  res.render("register", templateVars);
+  return res.render("register", templateVars);
 });
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    res.status(400).send("Please enter valid email or password");
-    res.end();
+    return res.status(400).send("Please enter valid email or password");
+    // res.end();
   }
   const user = findUserByEmail(email, users);
   if (user) {
-    res.status(400).send("Email already exist please enter new email");
-    res.end();
+    return res.status(400).send("Email already exist please enter new email");
+    // res.end();
   }
   const newUserId = generateRandomString();
   users[newUserId] = {
@@ -213,16 +213,16 @@ app.post("/register", (req, res) => {
     password: bcrypt.hashSync(password, 10),
   };
   req.session.user_id = newUserId;
-  res.redirect("/urls");
+  return res.redirect("/urls");
 });
 
 app.get("/login", (req, res) => {
   const userId = req.session.user_id;
   if (userId) {
-    res.redirect("/urls");
+    return res.redirect("/urls");
   }
   const templateVars = { user: findUserById(userId, users) };
-  res.render("login", templateVars);
+  return res.render("login", templateVars);
 });
 
 app.listen(PORT, () => {
