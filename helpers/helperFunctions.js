@@ -1,7 +1,9 @@
+// generates random string that is used for a new shortURL
 function generateRandomString() {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const length = 6;
-  let result = '';
+  let result = "";
   const charactersLength = characters.length;
 
   for (let i = 0; i < length; i++) {
@@ -9,7 +11,7 @@ function generateRandomString() {
   }
 
   return result;
-};
+}
 
 const findUserById = function (id, users) {
   for (let key in users) {
@@ -18,7 +20,7 @@ const findUserById = function (id, users) {
     }
   }
   return null;
-}
+};
 
 const findUserByEmail = function (email, users) {
   for (let key in users) {
@@ -27,14 +29,14 @@ const findUserByEmail = function (email, users) {
     }
   }
   return null;
-}
+};
 
 const passwordCheck = function (user, password) {
   if (user.password === password) {
     return true;
   }
   return false;
-}
+};
 
 const dbCheckForShortURL = function (url, urlDatabase) {
   for (let key in urlDatabase) {
@@ -43,8 +45,9 @@ const dbCheckForShortURL = function (url, urlDatabase) {
     }
   }
   return null;
-}
+};
 
+// returns urls that belongs to a logged in user
 const urlsForUser = (id, urlDatabase) => {
   const result = {};
   for (let shorturl in urlDatabase) {
@@ -64,8 +67,9 @@ const checkShortUrlBelongsToUser = function (url, id, database) {
     }
   }
   return null;
-}
+};
 
+// checks that user can only delete a url that they create
 const canDelete = function (url, id, database) {
   for (let key in database) {
     if (key === url) {
@@ -75,7 +79,7 @@ const canDelete = function (url, id, database) {
     }
   }
   return null;
-}
+};
 
 module.exports = {
   generateRandomString,
@@ -85,5 +89,5 @@ module.exports = {
   dbCheckForShortURL,
   urlsForUser,
   checkShortUrlBelongsToUser,
-  canDelete
-}
+  canDelete,
+};

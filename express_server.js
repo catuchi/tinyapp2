@@ -47,6 +47,8 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
+
+  // check if user exists and logged in
   if (!userId) {
     const templateVars = { user: null, error: "Please Log in" };
     return res.render("urls_index", templateVars);
@@ -61,6 +63,8 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const userId = req.session.user_id;
+
+  // check if user exists and logged in
   if (!userId) {
     res.redirect("/login");
   }
@@ -108,6 +112,8 @@ app.get("/urls/:id", (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
+
+  // check db to see if shortURL exists
   if (dbCheckForShortURL(shortURL, urlDatabase) === null) {
     res
       .status(403)
